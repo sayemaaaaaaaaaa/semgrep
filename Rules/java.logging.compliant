@@ -1,0 +1,8 @@
+rules:
+  - id: java.logging.compliant
+    message: "Compliant: Logging without sensitive information."
+    severity: INFO
+    languages:
+      - java
+    pattern: |
+      logger.info("login with username: " + $USERNAME);
