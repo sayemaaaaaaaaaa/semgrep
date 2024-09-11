@@ -1,0 +1,10 @@
+rules:
+  - id: java.auth.hardcoded-authentication
+    languages:
+      - java
+    severity: ERROR
+    message: "Non-Compliant: Hardcoded credentials detected in authentication."
+    pattern: return "admin".equals($USERNAME) && "password".equals($PASSWORD);
+    fix: |
+      // Use a secure method to authenticate the user, e.g., checking
+      credentials from a database.
