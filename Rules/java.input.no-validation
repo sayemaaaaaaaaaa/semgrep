@@ -1,0 +1,11 @@
+rules:
+  - id: java.input.no-validation
+    message: "Non-Compliant: User input is not validated, which can lead to
+      injection attacks."
+    severity: ERROR
+    languages:
+      - java
+    pattern: |
+      System.out.println("Processing input: " + $INPUT);
+    fix: |
+      // Validate user input before processing it.
