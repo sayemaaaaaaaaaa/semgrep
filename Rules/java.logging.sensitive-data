@@ -1,0 +1,11 @@
+rules:
+  - id: java.logging.sensitive-data
+    message: "Non-Compliant: Sensitive data (password) should not be logged."
+    severity: ERROR
+    languages:
+      - java
+    pattern: |
+      logger.info("login with username: " + $USERNAME + " and password: " +
+      $PASSWORD);
+    fix: |
+      // Avoid logging sensitive data like passwords.
