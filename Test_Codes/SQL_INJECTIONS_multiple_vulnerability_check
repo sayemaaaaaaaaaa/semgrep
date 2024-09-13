@@ -1,0 +1,150 @@
+import java.sql.*;
+import java.util.List;
+import org.hibernate.Query;
+import org.hibernate.Session;
+ 
+public class SQLInjectionExamples {
+ 
+     // 1.Vulnerable Code Direct concatenation in SQL queries
+    public void vulnerableRawSQLInjection(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        Statement stmt = conn.createStatement();
+        String query = "SELECT * FROM users WHERE id = '" + userId + "'";
+        ResultSet rs = stmt.executeQuery(query); 
+        while (rs.next()) {
+            System.out.println(rs.getString("username"));
+        }
+        conn.close();
+    }
+ 
+    // Safe Code using PreparedStatement
+    public void safeSQL(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        String query = "SELECT * FROM users WHERE id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, userId); 
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getString("username"));
+        }
+        conn.close();
+    }
+ 
+    //2. Unsafe Hibernate HQL Query with String Concatenation
+    public List<User> vulnerableHQLQuery(Session session, String username) {
+        String hql = "FROM User WHERE username = '" + username + "'";
+        Query query = session.createQuery(hql);
+        return query.list();
+    }
+ 
+    // Safe Hibernate HQL Query using Parameterized Input
+    public List<User> safeHQLQuery(Session session, String username) {
+        String hql = "FROM User WHERE username = :username";
+        Query query = session.createQuery(hql);
+        query.setParameter("username", username); 
+        return query.list();
+    }
+    
+    // 3. SQL Injection in executeUpdate with concatenation
+    public void vulnerableUpdateSQL(String userId, String newUsername) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        Statement stmt = conn.createStatement();
+        String query = "UPDATE users SET username = '" + newUsername + "' WHERE id = '" + userId + "'";
+        stmt.executeUpdate(query);
+        conn.close();
+    }
+ 
+    // Safe version using PreparedStatement
+    public void safeUpdateSQL(String userId, String newUsername) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        String query = "UPDATE users SET username = ? WHERE id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, newUsername);
+        pstmt.setString(2, userId);
+        pstmt.executeUpdate();
+        conn.close();
+    }
+
+    //4 Unsafe Use of StringBuilder to Construct SQL Queries
+    public void vulnerableStringBuilderSQL(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM users WHERE id = '").append(userId).append("'");
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql.toString());
+        while (rs.next()) {
+            System.out.println(rs.getString("username"));
+        }
+        conn.close();
+    }
+ 
+    // Safe Use of PreparedStatement Instead of StringBuilder
+    public void safeStringBuilderSQL(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        String query = "SELECT * FROM users WHERE id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, userId);
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getString("username"));
+        }
+        conn.close();
+    }
+    
+   // 5. SQL Injection with CallableStatement (Stored Procedure)
+    public void vulnerableCallableSQL(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        String query = "{call deleteUser('" + userId + "')}";
+        CallableStatement cstmt = conn.prepareCall(query);
+        cstmt.execute();
+        conn.close();
+    }
+ 
+    // Safe version using CallableStatement with parameters
+    public void safeCallableSQL(String userId) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "user", "password");
+        String query = "{call deleteUser(?)}";
+        CallableStatement cstmt = conn.prepareCall(query);
+        cstmt.setString(1, userId);
+        cstmt.execute();
+        conn.close();
+    }
+public static void main(String[] args) {
+        SQLInjectionExamples example = new SQLInjectionExamples();
+ 
+        String userId = "1 OR 1=1";
+        String newUsername = "newUser";
+        Session session=null;
+ 
+        try {
+            
+            System.out.println("Vulnerable SQL Injection:");
+            example.vulnerableSQLInjection(userId);
+ 
+            System.out.println("\nSafe SQL:");
+            example.safeSQL(userId);
+ 
+            System.out.println("\nVulnerable Update SQL Injection:");
+            example.vulnerableUpdateSQL(userId, newUsername);
+ 
+            System.out.println("\nSafe Update SQL:");
+            example.safeUpdateSQL(userId, newUsername);
+ 
+            System.out.println("\nVulnerable Callable SQL Injection:");
+            example.vulnerableCallableSQL(userId);
+ 
+            System.out.println("\nSafe Callable SQL:");
+            example.safeCallableSQL(userId);
+ 
+            System.out.println("\nVulnerable StringBuilder SQL Injection:");
+            example.vulnerableStringBuilderSQL(userId);
+ 
+            System.out.println("\nSafe StringBuilder SQL:");
+            example.safeStringBuilderSQL(userId);
+ 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
