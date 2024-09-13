@@ -1,0 +1,10 @@
+rules:
+  - id: java-sql-injection-non-compilant
+    patterns:
+      - pattern: >
+          String query="SELECT * FROM users WHERE username = '" + username + "'";
+    message: Potential SQL Injection vulnerability. Use PreparedStatement to prevent
+      injection.
+    languages:
+      - java
+    severity: ERROR
