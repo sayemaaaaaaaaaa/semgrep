@@ -1,0 +1,15 @@
+rules:
+  - id: java-compliant-access-control-update
+    patterns:
+      - pattern: >
+          if (session == null || !owner((String) session.getAttribute("userId"),
+
+          recordId)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "You do not have permission to update this record.");
+            return;
+          }
+    message: Access control is properly enforced. Users can only update records they
+      own.
+    languages:
+      - java
+    severity: ERROR
