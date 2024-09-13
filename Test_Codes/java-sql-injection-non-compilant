@@ -1,0 +1,28 @@
+import java.sql.*;
+ 
+public class SQLInjectionVulnerable {
+    public static void getUserData(String username) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "root", "password");
+ 
+        // Vulnerable SQL query construction
+        String query = "SELECT * FROM users WHERE username = '" + username + "'";
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+ 
+        while (resultSet.next()) {
+            System.out.println("User ID: " + resultSet.getInt("id"));
+            System.out.println("Username: " + resultSet.getString("username"));
+        }
+ 
+        statement.close();
+        connection.close();
+    }
+ 
+    public static void main(String[] args) {
+        try {
+            getUserData("admin' --"); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
