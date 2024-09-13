@@ -1,0 +1,32 @@
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.HashMap;
+import java.util.Map;
+ 
+public class DumyValues extends HttpServlet {
+    private static final Map<String, String> records = new HashMap<>();
+ 
+    static {
+        records.put("record1", "AAABBB");
+        records.put("record2", "BBBCCC");
+        records.put("record3", "CCCDDD");
+    }
+ 
+    private void updateRecord(String recordId, String newContent) {
+        if (records.containsKey(recordId)) {
+            records.put(recordId, newContent);
+            System.out.println("Record updated: " + recordId + " -> " + newContent);
+        } else {
+            System.out.println("Record not found: " + recordId);
+        }
+    }
+ 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String recordId = request.getParameter("recordId");
+        String newContent = request.getParameter("newContent");
+
+        updateRecord(recordId, newContent);
+        response.getWriter().println("Record updated successfully.");
+    }
+}
