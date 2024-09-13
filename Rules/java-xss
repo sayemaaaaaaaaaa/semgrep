@@ -1,0 +1,13 @@
+rules:
+  - id: java-xss
+    patterns:
+      - pattern: |
+          $OUT.println("<h1>" + $USER_INPUT + "</h1>");
+    message: Potential Cross-Site Scripting (XSS) vulnerability. Sanitize user input
+      before embedding in HTML.
+    languages:
+      - java
+    severity: ERROR
+    metadata:
+      cwe: CWE-79
+      owasp: A7:2021 - Cross-Site Scripting (XSS)
