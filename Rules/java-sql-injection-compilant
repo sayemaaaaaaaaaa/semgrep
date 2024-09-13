@@ -1,0 +1,9 @@
+rules:
+  - id: java-sql-injection-compilant
+    patterns:
+      - pattern: |
+          String query = "SELECT * FROM users WHERE username = ?";
+    message: Potential SQL Injection vulnerability. avoided Using PreparedStatement
+    languages:
+      - java
+    severity: ERROR
