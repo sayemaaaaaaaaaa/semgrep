@@ -1,0 +1,15 @@
+rules:
+  - id: pattern-not-inside
+    patterns:
+      - pattern: |
+          updateRecord(recordId, newContent);
+      - pattern-not-inside: >
+          if (session != null || owner((String) session.getAttribute("userId"),
+          recordId)) {
+           ...
+          }
+    message: Access control is properly enforced. Users can only update records they
+      own.
+    languages:
+      - java
+    severity: ERROR
