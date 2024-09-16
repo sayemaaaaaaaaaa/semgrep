@@ -1,0 +1,17 @@
+rules:
+  - id: pattern-inside
+    patterns:
+      - pattern-inside: >
+          private static void logSensitiveData(String username, String password)
+          {
+
+          ...
+
+          }
+      - pattern: >
+          logger.info("login with username: " + username + " and password: " +
+          password); 
+    message: logging in sensitive data please avoid it.
+    languages:
+      - java
+    severity: ERROR
