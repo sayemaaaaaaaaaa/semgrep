@@ -1,0 +1,11 @@
+rules:
+  - id: focus-metavariable
+    languages:
+      - java
+    message: logging sensitive data please avoid it.
+    patterns:
+      - pattern: |
+          logger.info("login with username: " + $USERNAME + " and password: " +
+          $PASSWORD); 
+      - focus-metavariable: $PASSWORD
+    severity: WARNING
