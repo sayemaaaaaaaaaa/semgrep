@@ -1,0 +1,14 @@
+rules:
+  - id: Metavariable-pattern
+    patterns:
+      - pattern-inside: |
+          logger.info($Z);
+      - metavariable-pattern:
+          metavariable: $Z
+          patterns:
+            - pattern: |
+                $PASSWORD
+    message: logging in sensitive data please avoid it.
+    languages:
+      - java
+    severity: ERROR
