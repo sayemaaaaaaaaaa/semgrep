@@ -1,0 +1,12 @@
+object OutOfBoundsWriteExample {
+  def updateElement(arr: Array[Int], index: Int, value: Int): Unit = {
+    // No bounds checking
+    //ruleid:scala-out-of-bounds-write
+    arr(index) = value
+  }
+ 
+  def main(args: Array[String]): Unit = {
+    val arr = Array(1, 2, 3)
+    updateElement(arr, 5, 100)  // This will throw an exception
+  }
+}
