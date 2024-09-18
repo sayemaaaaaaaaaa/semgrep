@@ -1,0 +1,17 @@
+rules:
+  - id: scala-out-of-bounds-write
+    patterns:
+      - pattern: |
+          $ARRAY($INDEX) = $VALUE
+    message: "Potential Out-of-Bounds Write: Ensure array index is within valid
+      bounds before assigning a value."
+    languages:
+      - scala
+    severity: ERROR
+    metadata:
+      cwe: CWE-787
+    patterns-where-any:
+      - pattern-not: |
+          if ($INDEX < $ARR.length && $INDEX >= 0) {
+            $ARR($INDEX)
+          }
