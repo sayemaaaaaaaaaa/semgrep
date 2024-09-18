@@ -1,0 +1,20 @@
+object OutOfBoundsReadTest {
+  def getElement(arr: Array[Int], index: Int): Int = {
+    // No bounds checking
+    //ruleid:scala-out-of-bounds-read
+    arr[index]
+  }
+ 
+  def safeGetElement(arr: Array[Int], index: Int): Option[Int] = {
+    //ok:scala-out-of-bounds-read
+    if (index >= 0 && index < arr.length)
+    { Some(arr[index])}
+    else None
+  }
+ 
+  def main(args: Array[String]): Unit = {
+    val arr = Array(1, 2, 3)
+    println(getElement(arr, 5))  // Out of bounds access
+    println(safeGetElement(arr, 5).getOrElse("Out of bounds"))  // Safe access
+  }
+}
