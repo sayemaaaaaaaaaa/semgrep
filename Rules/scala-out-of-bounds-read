@@ -1,0 +1,16 @@
+rules:
+  - id: scala-out-of-bounds-read
+    patterns:
+      - pattern: |
+          $ARR[$INDEX]
+      - pattern-not-inside: |
+          if ($INDEX >= 0 && $INDEX < $ARR.length){ 
+          ...
+          }
+    message: "Potential Out-of-Bounds Read: Ensure the array index is within valid
+      bounds before accessing."
+    languages:
+      - scala
+    severity: ERROR
+    metadata:
+      cwe: CWE-125
